@@ -23,6 +23,7 @@
 ## 运行方式
 
 ```bash
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
