@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}学生管理系统{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+<body>
+    <div class="page-glow page-glow-left"></div>
+    <div class="page-glow page-glow-right"></div>
+    <div class="layout">
+        <nav class="nav">
+            <a class="brand" href="{% url 'dashboard' %}">
+                <span class="brand-mark">SM</span>
+                <span>
+                    <strong>学生管理系统</strong>
+                    <small>Student Archive Console</small>
+                </span>
+            </a>
+            <div class="nav-links">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}">首页</a>
+                    <a href="{% url 'student_list' %}">学生列表</a>
+                    <a href="{% url 'student_create' %}">新增学生</a>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="button secondary">退出登录</button>
+                    </form>
+                {% endif %}
+            </div>
+        </nav>
+
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags|default:'success' }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <main class="content-shell">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

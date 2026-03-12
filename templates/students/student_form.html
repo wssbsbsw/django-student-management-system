@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{% if form.instance.pk %}编辑学生{% else %}新增学生{% endif %} - 学生管理系统{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>{% if form.instance.pk %}编辑学生{% else %}新增学生{% endif %}</h1>
+        <p class="muted">请填写完整的学生基本信息，重点字段保持统一格式，便于后续检索和维护。</p>
+    </div>
+    <a class="button secondary" href="{% url 'student_list' %}">返回列表</a>
+</section>
+
+<section class="card">
+    <div class="form-intro">
+        <div>
+            <span class="eyebrow">Editor</span>
+            <h2>学生档案表单</h2>
+        </div>
+        <p class="summary-note">建议优先补充学号、班级、联系方式等核心字段，提升后台信息完整度。</p>
+    </div>
+    <form method="post" class="grid form-grid">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="field {% if field.name == 'address' %}form-span{% endif %}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {{ field.errors }}
+            </div>
+        {% endfor %}
+        <div class="actions form-span">
+            <button type="submit">保存</button>
+            <a class="button secondary" href="{% url 'student_list' %}">取消</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

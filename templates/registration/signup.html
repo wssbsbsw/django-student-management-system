@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}注册 - 学生管理系统{% endblock %}
+
+{% block content %}
+<section class="card auth-card">
+    <span class="eyebrow">Register</span>
+    <h1>管理员注册</h1>
+    <p class="muted">创建新的后台账号后即可进入学生档案系统，适合教师或管理员首次开通使用。</p>
+    <form method="post" class="grid">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <div class="muted">{{ field.help_text }}</div>
+                {% endif %}
+                {{ field.errors }}
+            </div>
+        {% endfor %}
+        {% if form.non_field_errors %}
+            {{ form.non_field_errors }}
+        {% endif %}
+        <button type="submit">注册并登录</button>
+    </form>
+    <p class="muted auth-links">
+        已有账号？<a href="{% url 'login' %}">返回登录</a>
+    </p>
+</section>
+{% endblock %}

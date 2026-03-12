@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 学生管理系统{% endblock %}
+
+{% block content %}
+<section class="card hero">
+    <div class="hero-copy">
+        <span class="eyebrow">Overview</span>
+        <h1>系统首页</h1>
+        <p class="hero-note">以更清晰的方式查看学生档案概况、班级分布和最近录入记录，保持日常维护流程简洁顺手。</p>
+        <div class="action-group">
+            <a class="button" href="{% url 'student_create' %}">新增学生</a>
+            <a class="button secondary" href="{% url 'student_list' %}">查看全部学生</a>
+        </div>
+    </div>
+    <aside class="hero-aside">
+        <span class="kicker">Current Snapshot</span>
+        <h2>档案台账保持统一视图</h2>
+        <p class="summary-note">将新增、查询、详情查看聚合到一个界面节奏里，方便管理员快速判断当前数据状态。</p>
+    </aside>
+</section>
+
+<section class="grid stats">
+    <article class="card stat-card">
+        <div>
+            <div class="stat-label">学生总人数</div>
+            <div class="stat-value">{{ student_count }}</div>
+        </div>
+        <div class="stat-meta">持续维护中</div>
+    </article>
+    <article class="card stat-card">
+        <div>
+            <div class="stat-label">班级总数</div>
+            <div class="stat-value">{{ class_count }}</div>
+        </div>
+        <div class="stat-meta">覆盖当前录入班级</div>
+    </article>
+    <article class="card stat-card">
+        <div>
+            <div class="stat-label">最近录入</div>
+            <div class="stat-value">{{ recent_students|length }}</div>
+            <div class="stat-meta">展示最新 5 条学生记录</div>
+        </div>
+    </article>
+</section>
+
+<section class="surface-grid">
+    <article class="card">
+        <div class="panel-head">
+            <div>
+                <h2>最近录入学生</h2>
+                <p class="muted">最新档案按时间倒序展示。</p>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>学号</th>
+                        <th>姓名</th>
+                        <th>班级</th>
+                        <th>入学日期</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in recent_students %}
+                        <tr>
+                            <td><a class="record-link" href="{% url 'student_detail' student.pk %}">{{ student.student_id }}</a></td>
+                            <td>{{ student.name }}</td>
+                            <td><span class="tag">{{ student.class_name }}</span></td>
+                            <td>{{ student.enrollment_date }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4" class="empty-state">暂无学生数据。</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+    <article class="card">
+        <div class="panel-head">
+            <div>
+                <h2>班级分布</h2>
+                <p class="muted">按班级汇总当前已录入人数，并用图表直观展示占比差异。</p>
+            </div>
+        </div>
+        {% if class_summary %}
+            <div class="chart-shell">
+                <div class="chart-card">
+                    <div class="chart-y-axis">
+                        {% for item in class_summary %}
+                            <span>{{ item.class_name }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="chart-bars">
+                        {% for item in class_summary %}
+                            <div class="chart-row">
+                                <div class="chart-bar" style="width: {{ item.bar_width }}%;"></div>
+                                <div class="chart-value">{{ item.total }} 人 / {{ item.percent }}%</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if top_class %}
+                    <div class="chart-highlight">
+                        <span class="kicker">Top Class</span>
+                        <h2>{{ top_class.class_name }}</h2>
+                        <div class="stat-value">{{ top_class.total }}</div>
+                        <p class="muted">当前人数最多的班级，占全部学生的 {{ top_class.percent }}%。</p>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="class-list">
+            {% for item in class_summary %}
+                <div class="class-item">
+                    <div class="toolbar">
+                        <div>{{ item.class_name }}</div>
+                        <strong>{{ item.total }} 人</strong>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-bar" style="width: {{ item.percent }}%;"></div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-state">暂无班级数据。</div>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}学生列表 - 学生管理系统{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>学生列表</h1>
+        <p class="muted">支持按学号、姓名和班级进行组合查询，快速定位具体档案。</p>
+    </div>
+    <a class="button" href="{% url 'student_create' %}">新增学生</a>
+</section>
+
+<section class="grid stats">
+    <article class="card stat-card">
+        <div>
+            <div class="stat-label">学生总人数</div>
+            <div class="stat-value">{{ student_count }}</div>
+        </div>
+        <div class="stat-meta">系统中全部档案</div>
+    </article>
+    <article class="card stat-card">
+        <div>
+            <div class="stat-label">班级总数</div>
+            <div class="stat-value">{{ class_count }}</div>
+        </div>
+        <div class="stat-meta">用于当前列表检索参考</div>
+    </article>
+</section>
+
+<section class="card filter-card">
+    <div class="form-intro">
+        <div>
+            <span class="eyebrow">Search</span>
+            <h2>条件筛选</h2>
+        </div>
+        <p class="summary-note">检索栏保持简洁输入，适合日常学号核验、班级清单排查和姓名模糊搜索。</p>
+    </div>
+    <form method="get" class="inline-form">
+        {% for field in search_form %}
+            <div class="field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+        <div class="field sort-field">
+            <label for="sort-select">排序方式</label>
+            <select name="sort" id="sort-select">
+                {% for value, label in sort_choices %}
+                    <option value="{{ value }}" {% if current_sort == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit">查询</button>
+        <a class="button secondary" href="{% url 'student_list' %}">重置</a>
+    </form>
+</section>
+
+<section class="card results-card">
+    <div class="panel-head panel-head-spread">
+        <div>
+            <h2>档案结果</h2>
+            <p class="muted">当前共有 {{ filtered_count }} 条匹配记录，本页显示第 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 页。</p>
+        </div>
+        <span class="tag">排序：{{ current_sort }}</span>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>学号</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>年龄</th>
+                    <th>班级</th>
+                    <th>电话</th>
+                    <th>邮箱</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+                <tbody>
+                {% for student in students %}
+                    <tr>
+                        <td><a class="record-link" href="{% url 'student_detail' student.pk %}">{{ student.student_id }}</a></td>
+                        <td>{{ student.name }}</td>
+                        <td><span class="tag">{{ student.get_gender_display }}</span></td>
+                        <td>{{ student.age }}</td>
+                        <td><span class="tag">{{ student.class_name }}</span></td>
+                        <td>{{ student.phone|default:"-" }}</td>
+                        <td>{{ student.email|default:"-" }}</td>
+                        <td class="actions">
+                            <a href="{% url 'student_detail' student.pk %}">详情</a>
+                            <a href="{% url 'student_update' student.pk %}">编辑</a>
+                            <a href="{% url 'student_delete' student.pk %}">删除</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="empty-state">没有符合条件的学生记录。</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+        <nav class="pagination" aria-label="学生列表分页">
+            {% if page_obj.has_previous %}
+                <a class="button secondary" href="?{% if preserved_query %}{{ preserved_query }}&{% endif %}page=1">首页</a>
+                <a class="button secondary" href="?{% if preserved_query %}{{ preserved_query }}&{% endif %}page={{ page_obj.previous_page_number }}">上一页</a>
+            {% endif %}
+
+            <span class="pagination-status">第 {{ page_obj.number }} 页 / 共 {{ page_obj.paginator.num_pages }} 页</span>
+
+            {% if page_obj.has_next %}
+                <a class="button secondary" href="?{% if preserved_query %}{{ preserved_query }}&{% endif %}page={{ page_obj.next_page_number }}">下一页</a>
+                <a class="button secondary" href="?{% if preserved_query %}{{ preserved_query }}&{% endif %}page={{ page_obj.paginator.num_pages }}">末页</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+</section>
+{% endblock %}

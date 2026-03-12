@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}学生详情 - 学生管理系统{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>学生详情</h1>
+        <p class="muted">查看当前学生完整档案信息，方便进一步编辑或核对联系方式。</p>
+    </div>
+    <div class="actions">
+        <a class="button secondary" href="{% url 'student_list' %}">返回列表</a>
+        <a class="button" href="{% url 'student_update' student.pk %}">编辑信息</a>
+    </div>
+</section>
+
+<section class="card">
+    <div class="panel-head">
+        <div>
+            <span class="eyebrow">Profile</span>
+            <h2>{{ student.name }}</h2>
+        </div>
+        <span class="tag">{{ student.class_name }}</span>
+    </div>
+    <div class="detail-grid">
+        <div class="detail-item"><div class="muted">学号</div><strong>{{ student.student_id }}</strong></div>
+        <div class="detail-item"><div class="muted">姓名</div><strong>{{ student.name }}</strong></div>
+        <div class="detail-item"><div class="muted">性别</div><strong>{{ student.get_gender_display }}</strong></div>
+        <div class="detail-item"><div class="muted">年龄</div><strong>{{ student.age }}</strong></div>
+        <div class="detail-item"><div class="muted">班级</div><strong>{{ student.class_name }}</strong></div>
+        <div class="detail-item"><div class="muted">电话</div><strong>{{ student.phone|default:"-" }}</strong></div>
+        <div class="detail-item"><div class="muted">邮箱</div><strong>{{ student.email|default:"-" }}</strong></div>
+        <div class="detail-item"><div class="muted">入学日期</div><strong>{{ student.enrollment_date }}</strong></div>
+        <div class="detail-item detail-span">
+            <div class="muted">地址</div>
+            <strong>{{ student.address|default:"-" }}</strong>
+        </div>
+    </div>
+</section>
+{% endblock %}
