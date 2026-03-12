@@ -1,0 +1,41 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam backgroundColor white
+skinparam defaultFontName SimSun
+skinparam defaultFontSize 14
+skinparam ArrowColor black
+skinparam ArrowThickness 1
+skinparam PackageBorderColor black
+skinparam PackageBackgroundColor white
+skinparam NoteBackgroundColor white
+skinparam NoteBorderColor black
+skinparam componentStyle rectangle
+
+actor "管理员" as Admin
+
+rectangle "浏览器端\nHTML + CSS" as Browser
+
+package "Django 项目 student_mgmt" {
+  [路由层\nstudent_mgmt/urls.py\nstudents/urls.py] as Router
+  [视图层\nstudents/views.py] as Views
+  [表单层\nstudents/forms.py] as Forms
+  [模板层\ntemplates/*.html] as Templates
+  [静态资源\nstatic/css/site.css] as Static
+  [模型层\nstudents/models.py] as Models
+}
+
+database "SQLite 数据库\ndb.sqlite3" as DB
+
+Admin --> Browser : 访问系统
+Browser --> Router : 发送 HTTP 请求
+Router --> Views : 路由分发
+Views --> Forms : 校验输入
+Views --> Models : 读取/写入学生数据
+Models --> DB : 执行 ORM 操作
+DB --> Models : 返回结果
+Views --> Templates : 组装页面上下文
+Templates --> Browser : 返回 HTML 页面
+Static --> Browser : 提供样式资源
+
+@enduml

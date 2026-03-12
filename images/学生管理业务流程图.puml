@@ -1,0 +1,49 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam backgroundColor white
+skinparam defaultFontName SimSun
+skinparam defaultFontSize 14
+skinparam ArrowColor black
+skinparam ArrowThickness 1
+
+start
+:访问系统登录页;
+if (是否已有账号?) then (是)
+  :输入用户名和密码;
+  :提交登录表单;
+else (否)
+  :进入注册页;
+  :填写用户名和密码;
+  :注册并自动登录;
+endif
+
+:进入系统首页;
+:查看学生总数、班级总数\n和班级分布图;
+
+if (需要查询学生?) then (是)
+  :进入学生列表页;
+  :按学号、姓名、班级筛选;
+  :按字段排序并分页浏览;
+  :查看目标学生详情;
+endif
+
+if (需要新增学生?) then (是)
+  :进入新增学生页面;
+  :填写基础信息;
+  :提交并保存到数据库;
+endif
+
+if (需要修改学生?) then (是)
+  :进入编辑页面;
+  :修改信息并保存;
+endif
+
+if (需要删除学生?) then (是)
+  :进入删除确认页;
+  :确认删除记录;
+endif
+
+:返回列表或首页继续管理;
+stop
+@enduml

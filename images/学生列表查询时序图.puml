@@ -1,0 +1,39 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+skinparam backgroundColor white
+skinparam defaultFontName SimSun
+skinparam defaultFontSize 14
+skinparam ArrowColor black
+skinparam ArrowThickness 1
+skinparam sequence {
+  LifeLineBorderColor black
+  LifeLineBackgroundColor white
+  ParticipantBorderColor black
+  ParticipantBackgroundColor white
+  ParticipantFontColor black
+}
+
+actor "管理员" as Admin
+participant "浏览器" as Browser
+participant "路由" as Router
+participant "学生列表视图\nStudentListView" as View
+participant "搜索表单\nStudentSearchForm" as Form
+participant "学生模型\nStudent" as Model
+database "SQLite" as DB
+participant "列表模板\nstudent_list.html" as Template
+
+Admin -> Browser : 输入筛选条件和排序方式
+Browser -> Router : GET /students/
+Router -> View : 分发请求
+View -> Form : 绑定 GET 参数
+Form --> View : 返回校验结果
+View -> Model : 构建筛选与排序查询
+Model -> DB : 执行查询与分页
+DB --> Model : 返回结果集
+Model --> View : 返回学生数据
+View -> Template : 注入 students、page_obj 等上下文
+Template --> Browser : 渲染列表页面
+Browser --> Admin : 显示结果、分页和排序状态
+
+@enduml
